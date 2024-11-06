@@ -53,13 +53,19 @@ body {
     border: 2px solid #333333;
     display: flex;
     flex-direction: column;
+    min-width: 50%;
+    min-height: 350px;
+    background-color: #333333;
 }
 
 .display-screen {
+    background-color: white;
     margin: 20px 20px 10px;
     padding: 20px;
-    flex: auto;
+    flex: 0 auto;
     border: 2px solid #333333;
+    display: flex;
+    justify-content: space-between;
 }
 
 .keypad {
@@ -67,7 +73,23 @@ body {
     border: 2px solid #333333;
     display: flex;
     flex-direction: column;
-    margin: 20px 20px 10px;
-    padding: 5px;
+    margin: 10px 20px 20px;
 }
 
+.operators,
+.execute-keys {
+    flex: auto;
+    display: flex;
+}
+
+.keys {
+    flex: 2 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.key {
+    color: red;
+    min-width: 20px;
+    flex: 1 1 30%;
+}

@@ -1,10 +1,13 @@
-const display = document.querySelector(".display-screen");
+const displayInput = document.querySelector(".display-input");
+const displayOutput = document.querySelector(".display-output");
 const operators = document.querySelector(".operators");
 const keys = document.querySelector(".keys");
 const executeKeys = document.querySelector(".execute-keys");
 const OPERATORS = "+-*/";
 const KEYS = "1234567890";
 const EXECUTE_KEYS = "=C";
+
+displayOutput.textContent = "0";
 
 createOperatorsButtons();
 createKeyButtons();
@@ -52,15 +55,17 @@ function createAButton(name, eventFunction) {
 
 function keyClickEventFunction(event) {
     let textToDisplay = event.target.textContent;
+
     if (OPERATORS.includes(textToDisplay))
-        display.textContent += ` ${textToDisplay} `;
+        displayInput.textContent += ` ${textToDisplay} `;
     else 
-        display.textContent += textToDisplay;
+        displayInput.textContent += textToDisplay;
 
 }
 
 function clearKeyEventFunction(event) {
-    display.textContent = "";
+    displayInput.textContent = "";
+    displayOutput.textContent = 0;
 }
 
 function enterKeyEventFunction(event) {
