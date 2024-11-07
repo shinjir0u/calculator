@@ -4,8 +4,11 @@ const operators = document.querySelector(".operators");
 const keys = document.querySelector(".keys");
 const executeKeys = document.querySelector(".execute-keys");
 const OPERATORS = "+-*/";
-const KEYS = "1234567890";
+const KEYS = "1234567890.";
 const EXECUTE_KEYS = "=C";
+let isCalculationDone = false;
+let enteredKey;
+let isOperatorIncluded = false;
 
 displayOutput.textContent = "0";
 
@@ -13,6 +16,33 @@ createOperatorsButtons();
 createKeyButtons();
 createClearButton();
 createExecuteButton();
+createBackspaceButton();
+
+let calculation = {
+        "+": (a, b) => +a + +b,
+        "-": (a, b) => a - b,
+        "*": (a, b) => a * b,
+        "/": (a, b) => a / b,
+        undefined: (a, b) => +a,
+};
+
+function calculate(input) {
+    let splittedInput = input.split(" ");
+    let elementsToBeCalculated,
+        operandA,
+        operandB,
+        operator;
+    do {
+        elementsToBeCalculated = splittedInput.splice(0, 3);
+        operandA = elementsToBeCalculated[0];
+        operandB = elementsToBeCalculated[2];
+        operator = elementsToBeCalculated[1];
+        splittedInput.unshift(calculation[operator](operandA, operandB));
+    } while (splittedInput.length > 1);
+    displayOutput.textContent = (splittedInput[0] === Infinity) ? "Error: Division By 0" : 
+                                    (Number.isInteger(splittedInput[0])) ? splittedInput[0] : splittedInput[0].toFixed(6);
+    isCalculationDone = true;
+}
 
 function createOperatorsButtons() {
     let operatorKeys = OPERATORS.split("");
@@ -36,8 +66,13 @@ function createClearButton() {
 }
 
 function createExecuteButton() {
-    let button = createAButton("=", );
+    let button = createAButton("=", enterKeyEventFunction);
     executeKeys.appendChild(button);
+}
+
+function createBackspaceButton() {
+    let button = createAButton("<-", backspaceKeyEventFunction);
+    keys.appendChild(button);
 }
 
 function createAButton(name, eventFunction) {
@@ -56,20 +91,37 @@ function createAButton(name, eventFunction) {
 function keyClickEventFunction(event) {
     let textToDisplay = event.target.textContent;
 
-    if (OPERATORS.includes(textToDisplay))
-        displayInput.textContent += ` ${textToDisplay} `;
-    else 
-        displayInput.textContent += textToDisplay;
+    if (textToDisplay !== "." || !enteredKey.includes(".") ) {
+        if (isCalculationDone) {
+            displayInput.textContent = (OPERATORS.includes(textToDisplay)) ? displayOutput.textContent : "";
+            displayOutput.textContent = 0;
+            isCalculationDone = false;
+            isOperatorIncluded = false;
+        }
 
+        if (OPERATORS.includes(textToDisplay) && !isOperatorIncluded) {
+            displayInput.textContent += ` ${textToDisplay} `;
+            enteredKey = "";
+            isOperatorIncluded = true;
+        }
+        else if (KEYS.includes(textToDisplay)) {
+            displayInput.textContent += textToDisplay;
+            enteredKey += textToDisplay;
+        }
+    }
 }
 
-function clearKeyEventFunction(event) {
+function clearKeyEventFunction() {
     displayInput.textContent = "";
     displayOutput.textContent = 0;
 }
 
-function enterKeyEventFunction(event) {
+function enterKeyEventFunction() {
+    calculate(displayInput.textContent.replace(/[\n\r]+|[\s]{2,}/g, ""));
+}
 
+function backspaceKeyEventFunction() {
+    displayInput.textContent = displayInput.textContent.slice(0, displayInput.textContent.length - 1);
 }
 
 /*
@@ -96,4 +148,22 @@ function enterKeyEventFunction(event) {
 
     enterKeyEventFunction function
         DO sth
+*/
+
+/*
+    CREATE calculate function that'll split the input string provided by the user
+
+    calculate function
+        CREATE variable (splittedInput) that will take splitted input string
+        SPLICE first three elements
+        CREATE variable elementsToBeCalculated to store three elements
+        PERFORM calculation according to operator (Same as practiced before)
+*/
+/*
+    Logic Change
+
+        When a user enters a key, the key will be shown in both input and output
+        When an operator is entered afterwards, only the input will change but the change will be remembered by output
+        When ur enters another key and enters, the input will show the process while the output shows the result
+
 */
