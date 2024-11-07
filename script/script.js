@@ -5,7 +5,7 @@ const keys = document.querySelector(".keys");
 const executeKeys = document.querySelector(".execute-keys");
 const OPERATORS = "+-*/";
 const KEYS = "1234567890.";
-const EXECUTE_KEYS = "=C";
+const EXECUTE_KEYS = "=CEnterBackspace";
 let isCalculationDone = false;
 let enteredKey;
 let isOperatorIncluded = false;
@@ -17,6 +17,7 @@ createKeyButtons();
 createClearButton();
 createExecuteButton();
 createBackspaceButton();
+getKeyPressed();
 
 let calculation = {
         "+": (a, b) => +a + +b,
@@ -75,6 +76,10 @@ function createBackspaceButton() {
     keys.appendChild(button);
 }
 
+function getKeyPressed() {
+    window.addEventListener("keypress", keyPressEventFunction);
+}
+
 function createAButton(name, eventFunction) {
     const button = document.createElement("button");
     button.classList.add("key");
@@ -124,6 +129,31 @@ function backspaceKeyEventFunction() {
     displayInput.textContent = displayInput.textContent.slice(0, displayInput.textContent.length - 1);
 }
 
+function keyPressEventFunction(event) {
+    let key = event.key;
+    if ((OPERATORS + KEYS).includes(key)) {
+        if (key !== "." || !enteredKey.includes(".") ) {
+            if (isCalculationDone) {
+                displayInput.textContent = (OPERATORS.includes(key)) ? displayOutput.textContent : "";
+                displayOutput.textContent = 0;
+                isCalculationDone = false;
+                isOperatorIncluded = false;
+            }
+    
+            if (OPERATORS.includes(key) && !isOperatorIncluded) {
+                displayInput.textContent += ` ${key} `;
+                enteredKey = "";
+                isOperatorIncluded = true;
+            }
+            else if (KEYS.includes(key)) {
+                displayInput.textContent += key;
+                enteredKey += key;
+            }
+        }
+    } 
+    else if ("Enter" === key)
+        enterKeyEventFunction();
+}
 /*
     CREATE a variable node (display) for display screen,
                             (operators) for operators node
